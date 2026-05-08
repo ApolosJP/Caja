@@ -248,7 +248,7 @@
     /* ─── SUMMARY CARDS ─────────────────────────────────────── */
     .summary-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: 1fr;
       gap: 18px;
       margin-bottom: 36px;
     }
@@ -269,7 +269,9 @@
       top: 0; left: 0; right: 0;
       height: 2px;
     }
-    .summary-card.balance::before  { background: linear-gradient(90deg, var(--accent), transparent); }
+    .summary-card.balance {
+      text-align: center;
+    }
     .summary-card.entradas::before { background: linear-gradient(90deg, var(--green), transparent); }
     .summary-card.salidas::before  { background: linear-gradient(90deg, var(--red), transparent); }
     .summary-card.movs::before     { background: linear-gradient(90deg, #64b5f6, transparent); }
@@ -283,7 +285,7 @@
     }
     .card-amount {
       font-family: 'DM Mono', monospace;
-      font-size: 1.65rem;
+      font-size: 2.15rem;
       font-weight: 500;
       line-height: 1;
     }
@@ -482,13 +484,68 @@
 
     /* ─── RESPONSIVE ─────────────────────────────────────────── */
     @media (max-width: 700px) {
-      .login-card { padding: 36px 24px; margin: 16px; }
-      main { padding: 20px 14px 40px; }
-      .summary-grid { grid-template-columns: 1fr 1fr; }
+      /* Login */
+      .login-card { padding: 36px 20px; margin: 16px; }
+
+      /* Layout */
+      main { padding: 16px 12px 40px; }
+      .summary-grid { grid-template-columns: 1fr; }
+
+      /* Header compacto */
+      .header-inner { padding: 0 14px; height: 56px; }
+      .brand-name { font-size: 0.9rem; }
+      .brand-name span { display: none; }
+      .btn-refresh span { display: none; }
+
+      /* Saldo más prominente en móvil */
+      .card-amount { font-size: 2.5rem; }
+      .summary-card { padding: 22px 20px; }
+
+      /* Filtros en columna */
+      .filters-row { flex-direction: column; align-items: stretch; gap: 8px; }
+      .filter-select, .filter-input { width: 100%; min-width: unset; font-size: 0.9rem; padding: 11px 14px; }
+
+      /* Tabla → tarjetas apiladas */
+      thead { display: none; }
+      tbody tr {
+        display: flex;
+        flex-direction: column;
+        padding: 14px 16px;
+        border-bottom: 1px solid rgba(201,168,76,0.1);
+        gap: 6px;
+      }
+      tbody td {
+        display: block;
+        padding: 0;
+        font-size: 0.85rem;
+      }
+      td.date {
+        font-size: 0.72rem;
+        color: var(--muted);
+        order: 1;
+      }
+      td.concept {
+        font-size: 0.95rem;
+        font-weight: 500;
+        order: 2;
+        line-height: 1.3;
+      }
+      td.type-badge { order: 3; }
+      td.amount {
+        text-align: left;
+        font-size: 1.05rem;
+        font-weight: 600;
+        order: 4;
+      }
       td.running { display: none; }
-      thead th:last-child { display: none; }
-      .filters-row { gap: 8px; }
-      .filter-input { min-width: 160px; }
+
+      /* Footer paginación */
+      .table-footer { flex-direction: column; gap: 10px; align-items: center; padding: 14px 16px; }
+      .page-btn { width: 34px; height: 34px; font-size: 0.85rem; }
+
+      /* Statement header */
+      .statement-header { flex-direction: column; align-items: flex-start; gap: 4px; padding: 14px 16px; }
+      .last-updated { font-size: 0.68rem; }
     }
 
     /* ─── SPIN ANIM ─────────────────────────────────────────── */
@@ -564,11 +621,7 @@
         <div class="card-amount gold" id="stat-balance">—</div>
         <div class="card-sub">Balance en caja</div>
       </div>
-      <div class="summary-card movs">
-        <div class="card-label">Total movimientos</div>
-        <div class="card-amount blue" id="stat-total">—</div>
-        <div class="card-sub" id="stat-period">—</div>
-      </div>
+
     </div>
 
     <!-- FILTERS -->
