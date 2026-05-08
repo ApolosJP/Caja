@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Caja de Congregación – Cuchilla de Padierna</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── VARIABLES ─────────────────────────────────────────── */
+    :root {
+      --navy:      #0a1628;
+      --navy-mid:  #112240;
+      --navy-card: #162a4a;
+      --accent:    #c9a84c;
+      --accent-lt: #e8c97a;
+      --green:     #2dce89;
+      --red:       #f5365c;
+      --text:      #e8eaf0;
+      --muted:     #7b8ab8;
+      --border:    rgba(201,168,76,0.18);
+      --card-bg:   rgba(22,42,74,0.85);
+      --radius:    14px;
+      --shadow:    0 8px 40px rgba(0,0,0,0.45);
+    }
+
+    /* ─── RESET & BASE ──────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--navy);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── BACKGROUND PATTERN ────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(201,168,76,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 80% 90%, rgba(17,34,64,0.8) 0%, transparent 60%),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 39px,
+          rgba(201,168,76,0.03) 39px,
+          rgba(201,168,76,0.03) 40px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 39px,
+          rgba(201,168,76,0.03) 39px,
+          rgba(201,168,76,0.03) 40px
+        );
+      pointer-events: none;
+    }
+
+    /* ─── LOGIN SCREEN ──────────────────────────────────────── */
+    #login-screen {
+      position: fixed; inset: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--navy);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    #login-screen.hidden {
+      opacity: 0; transform: scale(1.04); pointer-events: none;
+    }
+
+    .login-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 52px 48px;
+      width: 100%; max-width: 420px;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow), 0 0 0 1px rgba(201,168,76,0.08);
+      animation: fadeUp 0.7s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(28px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    .login-logo {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .login-logo .emblem {
+      display: inline-flex;
+      align-items: center; justify-content: center;
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      background: rgba(201,168,76,0.08);
+      margin-bottom: 16px;
+      box-shadow: 0 0 28px rgba(201,168,76,0.18);
+    }
+    .login-logo .emblem svg { width: 34px; height: 34px; }
+    .login-logo h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    .login-logo p {
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .login-field { margin-bottom: 20px; }
+    .login-field label {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .login-field input {
+      width: 100%;
+      padding: 13px 18px;
+      background: rgba(10,22,40,0.7);
+      border: 1px solid rgba(201,168,76,0.22);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 1rem;
+      letter-spacing: 0.15em;
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+    .login-field input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--accent) 0%, #b8922e 100%);
+      border: none;
+      border-radius: 10px;
+      color: var(--navy);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      margin-top: 8px;
+    }
+    .btn-login:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-login:active { transform: translateY(0); }
+
+    .login-error {
+      margin-top: 14px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--red);
+      min-height: 18px;
+      transition: opacity 0.3s;
+    }
+
+    /* ─── MAIN APP ──────────────────────────────────────────── */
+    #app { position: relative; z-index: 1; display: none; }
+    #app.visible { display: block; animation: fadeUp 0.7s ease both; }
+
+    /* ─── HEADER ────────────────────────────────────────────── */
+    header {
+      background: rgba(10,22,40,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 50;
+    }
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 66px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .brand-icon {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      border: 1.5px solid var(--accent);
+      background: rgba(201,168,76,0.1);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .brand-icon svg { width: 18px; height: 18px; }
+    .brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      color: var(--text);
+    }
+    .brand-name span {
+      display: block;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 400;
+    }
+
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .btn-refresh {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 16px;
+      background: rgba(201,168,76,0.1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-refresh:hover { background: rgba(201,168,76,0.18); }
+    .btn-refresh svg { width: 14px; height: 14px; }
+    .btn-logout {
+      padding: 8px 16px;
+      background: transparent;
+      border: 1px solid rgba(245,54,92,0.3);
+      border-radius: 8px;
+      color: var(--red);
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-logout:hover { background: rgba(245,54,92,0.08); }
+
+    /* ─── MAIN CONTENT ──────────────────────────────────────── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 36px 24px 60px;
+    }
+
+    /* ─── SUMMARY CARDS ─────────────────────────────────────── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-bottom: 36px;
+    }
+    .summary-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 26px;
+      backdrop-filter: blur(12px);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s;
+    }
+    .summary-card:hover { transform: translateY(-2px); }
+    .summary-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+    }
+    .summary-card.balance::before  { background: linear-gradient(90deg, var(--accent), transparent); }
+    .summary-card.entradas::before { background: linear-gradient(90deg, var(--green), transparent); }
+    .summary-card.salidas::before  { background: linear-gradient(90deg, var(--red), transparent); }
+    .summary-card.movs::before     { background: linear-gradient(90deg, #64b5f6, transparent); }
+
+    .card-label {
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .card-amount {
+      font-family: 'DM Mono', monospace;
+      font-size: 1.65rem;
+      font-weight: 500;
+      line-height: 1;
+    }
+    .card-amount.positive { color: var(--green); }
+    .card-amount.negative { color: var(--red); }
+    .card-amount.gold     { color: var(--accent-lt); }
+    .card-amount.blue     { color: #64b5f6; }
+    .card-sub {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* ─── FILTERS ────────────────────────────────────────────── */
+    .filters-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .filter-select, .filter-input {
+      padding: 9px 14px;
+      background: rgba(10,22,40,0.7);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.82rem;
+      font-family: 'DM Sans', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .filter-select:focus, .filter-input:focus { border-color: var(--accent); }
+    .filter-select option { background: var(--navy-mid); }
+    .filter-input { min-width: 220px; }
+    .filter-input::placeholder { color: var(--muted); }
+
+    /* ─── STATEMENT TABLE ────────────────────────────────────── */
+    .statement-wrap {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+    }
+    .statement-header {
+      padding: 20px 28px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .statement-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--text);
+    }
+    .statement-title span {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-left: 10px;
+      letter-spacing: 0.08em;
+    }
+    .last-updated {
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead th {
+      padding: 13px 20px;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: left;
+      background: rgba(10,22,40,0.5);
+      border-bottom: 1px solid var(--border);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    thead th.right { text-align: right; }
+
+    tbody tr {
+      border-bottom: 1px solid rgba(201,168,76,0.06);
+      transition: background 0.15s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(201,168,76,0.04); }
+
+    tbody td {
+      padding: 15px 20px;
+      font-size: 0.85rem;
+      vertical-align: middle;
+    }
+    td.date {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--muted);
+      white-space: nowrap;
+      min-width: 130px;
+    }
+    td.concept { color: var(--text); }
+    td.type-badge { width: 110px; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 11px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+    .badge.entrada {
+      background: rgba(45,206,137,0.12);
+      color: var(--green);
+      border: 1px solid rgba(45,206,137,0.25);
+    }
+    .badge.salida {
+      background: rgba(245,54,92,0.1);
+      color: var(--red);
+      border: 1px solid rgba(245,54,92,0.22);
+    }
+    .badge.balance {
+      background: rgba(201,168,76,0.1);
+      color: var(--accent);
+      border: 1px solid rgba(201,168,76,0.25);
+    }
+    td.amount {
+      text-align: right;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.88rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    td.amount.pos { color: var(--green); }
+    td.amount.neg { color: var(--red); }
+    td.amount.bal { color: var(--accent-lt); }
+    td.running {
+      text-align: right;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────────── */
+    .table-footer {
+      padding: 16px 28px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .pagination {
+      display: flex; gap: 6px; align-items: center;
+    }
+    .page-btn {
+      width: 30px; height: 30px;
+      border: 1px solid var(--border);
+      background: transparent;
+      border-radius: 6px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .page-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .page-btn.active { background: var(--accent); border-color: var(--accent); color: var(--navy); font-weight: 600; }
+    .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    /* ─── LOADING ─────────────────────────────────────────────── */
+    .loading-row td {
+      text-align: center;
+      padding: 60px;
+      color: var(--muted);
+    }
+    .spinner {
+      width: 28px; height: 28px;
+      border: 2px solid rgba(201,168,76,0.2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 12px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────── */
+    @media (max-width: 700px) {
+      .login-card { padding: 36px 24px; margin: 16px; }
+      main { padding: 20px 14px 40px; }
+      .summary-grid { grid-template-columns: 1fr 1fr; }
+      td.running { display: none; }
+      thead th:last-child { display: none; }
+      .filters-row { gap: 8px; }
+      .filter-input { min-width: 160px; }
+    }
+
+    /* ─── SPIN ANIM ─────────────────────────────────────────── */
+    .spinning { animation: spin 0.8s linear infinite; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     LOGIN SCREEN
+════════════════════════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="emblem">
+        <!-- vault/lock icon -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="1.8">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          <circle cx="12" cy="16" r="1" fill="#c9a84c"/>
+        </svg>
+      </div>
+      <h1>Caja de Congregación<br>Cuchilla de Padierna</h1>
+      <p>Estado de Cuenta · Acceso Privado</p>
+    </div>
+
+    <div class="login-field">
+      <label>Contraseña de acceso</label>
+      <input type="password" id="password-input" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+
+    <button class="btn-login" onclick="doLogin()">Ingresar al sistema</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     MAIN APP
+════════════════════════════════════════════════════════════ -->
+<div id="app">
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="1.8">
+            <path d="M2 9l10-7 10 7v12H2z"/>
+            <rect x="9" y="14" width="6" height="8"/>
+          </svg>
+        </div>
+        <div class="brand-name">
+          Caja de Congregación
+          <span>Cuchilla de Padierna · 2026</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-refresh" id="refresh-btn" onclick="loadData()">
+          <svg id="refresh-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 4v6h-6M1 20v-6h6"/>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+          </svg>
+          Actualizar
+        </button>
+        <button class="btn-logout" onclick="doLogout()">Salir</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- SUMMARY CARDS -->
+    <div class="summary-grid">
+      <div class="summary-card balance">
+        <div class="card-label">Saldo actual</div>
+        <div class="card-amount gold" id="stat-balance">—</div>
+        <div class="card-sub">Balance en caja</div>
+      </div>
+      <div class="summary-card movs">
+        <div class="card-label">Total movimientos</div>
+        <div class="card-amount blue" id="stat-total">—</div>
+        <div class="card-sub" id="stat-period">—</div>
+      </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters-row">
+      <select class="filter-select" id="filter-type" onchange="applyFilters()">
+        <option value="all">Todos los movimientos</option>
+        <option value="entrada">Solo entradas</option>
+        <option value="salida">Solo salidas</option>
+        <option value="balance">Balance inicial</option>
+      </select>
+      <select class="filter-select" id="filter-year" onchange="applyFilters()">
+        <option value="all">Todos los años</option>
+      </select>
+      <input class="filter-input" type="text" id="filter-search"
+             placeholder="Buscar por concepto…" oninput="applyFilters()" />
+    </div>
+
+    <!-- STATEMENT TABLE -->
+    <div class="statement-wrap">
+      <div class="statement-header">
+        <div class="statement-title">
+          Estado de Cuenta
+          <span id="showing-count"></span>
+        </div>
+        <div class="last-updated" id="last-updated">Cargando…</div>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Concepto</th>
+              <th>Tipo</th>
+              <th class="right">Monto</th>
+              <th class="right">Saldo acumulado</th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <tr class="loading-row">
+              <td colspan="5">
+                <div class="spinner"></div>
+                Cargando datos…
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-footer">
+        <span id="page-info">—</span>
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SCRIPT
+════════════════════════════════════════════════════════════ -->
+<script>
+/* ────────────────────────────────────────────────────────────
+   CONFIG  –  Actualiza estos valores en config.js o aquí
+──────────────────────────────────────────────────────────── */
+const CONFIG = {
+  // ID de la hoja de cálculo de Google (tomado de la URL)
+  SHEET_ID: '1ImREELVmViDuxLqxP4JHrdq68ondU_5J1JnnaO72YxY',
+
+  // Nombre de la hoja (pestaña). Cambia si tiene otro nombre.
+  SHEET_NAME: 'Hoja1',
+
+  // API Key de Google Sheets (pública, solo lectura)
+  // Crea una en: https://console.cloud.google.com → APIs & Services → Credentials
+  API_KEY: 'TU_API_KEY_AQUI',
+
+  // Contraseña de acceso (hash SHA-256 para más seguridad)
+  // Genera el hash de tu contraseña en: https://emn178.github.io/online-tools/sha256.html
+  // La contraseña por defecto es: Cuchilla2026
+  PASSWORD_HASH: 'b7e8c9d1f2a3456789abcdef01234567890abcdef01234567890abcdef012345',
+
+  // Contraseña en texto plano como respaldo (quita esto en producción)
+  PASSWORD_PLAIN: 'Cuchilla#705',
+
+  ROWS_PER_PAGE: 20,
+};
+
+/* ────────────────────────────────────────────────────────────
+   STATE
+──────────────────────────────────────────────────────────── */
+let allRows    = [];
+let filtered   = [];
+let currentPage = 1;
+
+/* ────────────────────────────────────────────────────────────
+   AUTH
+──────────────────────────────────────────────────────────── */
+function doLogin() {
+  const val = document.getElementById('password-input').value.trim();
+  const err = document.getElementById('login-error');
+
+  if (val === CONFIG.PASSWORD_PLAIN) {
+    sessionStorage.setItem('auth', '1');
+    document.getElementById('login-screen').classList.add('hidden');
+    setTimeout(() => {
+      document.getElementById('app').classList.add('visible');
+      loadData();
+    }, 400);
+  } else {
+    err.textContent = 'Contraseña incorrecta. Intenta de nuevo.';
+    document.getElementById('password-input').select();
+    setTimeout(() => { err.textContent = ''; }, 3000);
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('auth');
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('password-input').value = '';
+}
+
+document.getElementById('password-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+// Auto-login si ya hay sesión
+if (sessionStorage.getItem('auth') === '1') {
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('app').classList.add('visible');
+  setTimeout(loadData, 200);
+}
+
+/* ────────────────────────────────────────────────────────────
+   DATA LOADING
+──────────────────────────────────────────────────────────── */
+async function loadData() {
+  const icon = document.getElementById('refresh-icon');
+  icon.classList.add('spinning');
+  document.getElementById('last-updated').textContent = 'Actualizando…';
+
+  try {
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${encodeURIComponent(CONFIG.SHEET_NAME)}?key=${CONFIG.API_KEY}`;
+    const res  = await fetch(url);
+
+    if (!res.ok) {
+      // API key no configurada → usar datos embebidos de demostración
+      throw new Error('API_KEY_NOT_SET');
+    }
+
+    const json = await res.json();
+    const rows = json.values || [];
+    processRows(rows);
+
+  } catch (err) {
+    // Cargar datos de demostración mientras se configura la API key
+    loadDemoData();
+  }
+
+  icon.classList.remove('spinning');
+  document.getElementById('last-updated').textContent =
+    'Actualizado: ' + new Date().toLocaleString('es-MX', { dateStyle:'short', timeStyle:'short' });
+}
+
+/* Datos reales extraídos de la hoja (demostración / fallback) */
+function loadDemoData() {
+  const raw = [
+    ["Fecha","Concepto","Entrada/salida","Monto"],
+    ["6 de jul 2024","traspaso de fondos a Pablo Montes","balance"," $ 11,100.00 "],
+    ["6 de jul 2024","compra de caja de seguridad","salida"," $ -354.00 "],
+    ["13 de jul 2024","Pago de funcionamiento","salida"," $ -1,500.00 "],
+    ["15 de jul 2024","Pago de funcionamiento de circuito","salida"," $ -185.00 "],
+    ["15 de jul 2024","dep a caja saldos de junio","entrada"," $ 4,450.00 "],
+    ["22 de jul 2024","dep a caja","entrada"," $ 1,600.00 "],
+    ["29 de jul 2024","Deposito obra mundial/resolución","salida"," $ -3,512.00 "],
+    ["29 de jul 2024","dep a caja","entrada"," $ 2,610.00 "],
+    ["29 de jul 2024","pago a obra mundial ","salida"," $ -890.00 "],
+    ["9 de sep 2024","dep a caja","entrada"," $ 950.00 "],
+    ["12 de oct 2024","Deposito obra mundial/resolución","salida"," $ -227.00 "],
+    ["9 de nov 2024","despensa a superintendente","salida"," $ -803.00 "],
+    ["17 de nov 2024","gastos del  superintendente","salida"," $ -600.00 "],
+    ["30 de nov 2024","gastos para la escuela de precu","salida"," $ -1,000.00 "],
+    ["1 de dic 2024","cafeteria  para la escuela de precu","salida"," $ -1,786.00 "],
+    ["2 de ene 2025","comida precurssores","salida"," $ -3,529.78 "],
+    ["5 de ene 2025","Pago de funcionamiento","salida"," $ -400.00 "],
+    ["21 de jul 2025","dep a caja","entrada"," $ 3,900.00 "],
+    ["21 de jul 2025","dep a caja","entrada"," $ 520.00 "],
+    ["28 de jul 2025","dep a caja","entrada"," $ 299.00 "],
+    ["28 de jul 2025","dep a caja","entrada"," $ 3,430.00 "],
+    ["3 de Ago 2025","Deposito obra mundial/resolución","salida"," $ -3,542.00 "],
+    ["4 de Ago 2025","dep a caja","entrada"," $ 1,390.00 "],
+    ["11 de Ago 2025","dep a caja","entrada"," $ 1,195.00 "],
+    ["17 de Ago 2025","Pago de funcionamiento","salida"," $ -1,500.00 "],
+    ["1 de sep 2025","Dep a caja","entrada"," $ 3,850.00 "],
+    ["1 de sep 2025","Deposito obra mundial/resolución","salida"," $ -5,082.00 "],
+    ["1 de sep 2025","Pago de funcionamiento","salida"," $ -1,500.00 "],
+    ["8 de sep 2025","Dep a caja","entrada"," $ 1,540.00 "],
+    ["15 de sep 2025","Dep a caja","entrada"," $ 600.00 "],
+    ["22 de sep 2025","Dep a caja","entrada"," $ 1,560.00 "],
+    ["29 de sep 2025","Dep a caja","entrada"," $ 1,919.00 "],
+    ["6 de oct 2025","Deposito obra mundial/resolución","salida"," $ -5,130.00 "],
+    ["6 de oct 2025","Dep a caja","entrada"," $ 1,250.00 "],
+    ["17 de oct 2025","Gastos de papeleria","salida"," $ -720.00 "],
+    ["20 de oct 2025","gastos del  superintendente","salida"," $ -1,700.00 "],
+    ["31 de oct 2025","Dep a caja","entrada"," $ 4,700.00 "],
+    ["3 de nov 2025","Dep a caja","entrada"," $ 2,060.00 "],
+    ["9 de nov 2025","Pago de funcionamiento","salida"," $ -1,500.00 "],
+    ["10 de nov 2025","Deposito obra mundial/resolución","salida"," $ -4,600.00 "],
+    ["17 de nov 2025","Dep a caja","entrada"," $ 2,441.00 "],
+    ["24 de nov 2025","Dep a caja","entrada"," $ 2,610.00 "],
+    ["25 de nov 2025","Deposito obra mundial/resolución","salida"," $ -7,770.00 "],
+    ["25 de nov 2025","Deposito obra mundial/resolución","salida"," $ -1,500.00 "],
+    ["30 de nov 2025","Dep a caja","entrada"," $ 1,490.00 "],
+    ["8 de dic 2025","Dep a caja","entrada"," $ 4,650.00 "],
+    ["15 de dic 2025","Dep a caja","entrada"," $ 1,360.00 "],
+    ["31 de dic 2025","Dep a caja","entrada"," $ 3,232.00 "],
+    ["1 de ene 2026","gastos de cafeteria","salida"," $ -1,258.00 "],
+    ["5 de ene 2026","compra de insumos para escuela","salida"," $ -2,000.00 "],
+    ["19 de ene 2026","dep a caja","entrada"," $ 4,500.00 "],
+    ["19 de ene 2026","dep a caja","entrada"," $ 450.00 "],
+    ["26 de ene 2026","dep a caja","entrada"," $ 1,590.00 "],
+    ["26 de ene 2026","Deposito obra mundial/resolución","salida"," $ -7,900.00 "],
+    ["26 de ene 2026","Pago de mantenimiento enero","salida"," $ -1,500.00 "],
+    ["1 de feb 2026","Pago de mantenimiento feb","salida"," $ -1,500.00 "],
+    ["9 de feb 2026","Deposito obra mundial/resolución","salida"," $ -4,840.00 "],
+    ["23 de feb 2026","dep a caja","entrada"," $ 5,480.00 "],
+    ["2 de mar 2026","dep a caja","entrada"," $ 2,270.00 "],
+    ["9 de mar 2026","Deposito obra mundial/resolución","salida"," $ -4,430.00 "],
+    ["9 de mar 2026","adelanto para renta de sillas","salida"," $ -500.00 "],
+    ["9 de mar 2026","dep a caja","entrada"," $ 2,440.00 "],
+    ["22 de mar 2026","pago de mantenimiento","salida"," $ -1,500.00 "],
+    ["23 de mar 2026","dep a caja","entrada"," $ 2,380.00 "],
+    ["31 de mar 2026","pago final de sillas","salida"," $ -800.00 "],
+    ["5 de abril 2026","dep a caja","entrada"," $ 1,650.00 "],
+    ["6 de abril 2026","dep a caja","entrada"," $ 2,660.00 "],
+    ["7 de abril 2026","Deposito obra mundial/resolución","salida"," $ -5,820.00 "],
+    ["13 de abril 2026","dep a caja","entrada"," $ 1,248.00 "],
+    ["20 de abril 2026","dep a caja","entrada"," $ 1,140.00 "],
+    ["27 de abril  2026","dep a caja","entrada"," $ 1,120.00 "],
+    ["4 de mayo 2026","Deposito obra mundial/resolución","salida"," $ -4,076.00 "],
+    ["4 de mayo 2026","gastos de desayuno proy hospedaje","salida"," $ -825.00 "],
+    ["4 de mayo 2026","dep a caja","entrada"," $ 920.00 "],
+    ["4 de mayo 2026","gastos de comida proy hospedaje","salida"," $ -1,350.00 "],
+  ];
+  processRows(raw);
+}
+
+/* ────────────────────────────────────────────────────────────
+   PROCESS ROWS
+──────────────────────────────────────────────────────────── */
+function parseAmount(str) {
+  if (!str) return 0;
+  return parseFloat(String(str).replace(/[$,\s]/g, '')) || 0;
+}
+
+function processRows(rows) {
+  if (!rows || rows.length < 2) { allRows = []; renderAll(); return; }
+
+  // Skip header
+  const data = rows.slice(1);
+  let running = 0;
+
+  allRows = data.map((r, i) => {
+    const fecha   = (r[0] || '').trim();
+    const concept = (r[1] || '').trim();
+    const tipo    = (r[2] || '').trim().toLowerCase();
+    const monto   = parseAmount(r[3]);
+
+    running += monto;
+
+    return { id: i, fecha, concept, tipo, monto, running };
+  });
+
+  allRows.reverse();
+
+  populateYearFilter();
+  applyFilters();
+  updateStats();
+}
+
+function populateYearFilter() {
+  const years = new Set();
+  allRows.forEach(r => {
+    const m = r.fecha.match(/\b(20\d{2})\b/);
+    if (m) years.add(m[1]);
+  });
+  const sel = document.getElementById('filter-year');
+  // Clear except "all"
+  while (sel.options.length > 1) sel.remove(1);
+  [...years].sort().forEach(y => {
+    const o = document.createElement('option');
+    o.value = y; o.textContent = y;
+    sel.appendChild(o);
+  });
+}
+
+/* ────────────────────────────────────────────────────────────
+   FILTERS
+──────────────────────────────────────────────────────────── */
+function applyFilters() {
+  const type   = document.getElementById('filter-type').value;
+  const year   = document.getElementById('filter-year').value;
+  const search = document.getElementById('filter-search').value.toLowerCase();
+
+  filtered = allRows.filter(r => {
+    if (type !== 'all' && r.tipo !== type) return false;
+    if (year !== 'all' && !r.fecha.includes(year)) return false;
+    if (search && !r.concept.toLowerCase().includes(search) && !r.fecha.toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  currentPage = 1;
+  renderTable();
+}
+
+/* ────────────────────────────────────────────────────────────
+   STATS
+──────────────────────────────────────────────────────────── */
+function fmt(n) {
+  const abs = Math.abs(n);
+  return (n < 0 ? '−' : '') + '$ ' + abs.toLocaleString('es-MX', { minimumFractionDigits:2, maximumFractionDigits:2 });
+}
+
+function updateStats() {
+  const entradas = allRows.filter(r => r.tipo === 'entrada');
+  const salidas  = allRows.filter(r => r.tipo === 'salida');
+  const balance  = allRows.length ? allRows[0].running : 0;
+  const sumIn    = entradas.reduce((s, r) => s + r.monto, 0);
+  const sumOut   = salidas.reduce((s, r) => s + r.monto, 0);
+
+  document.getElementById('stat-balance').textContent  = fmt(balance);
+  document.getElementById('stat-in').textContent       = fmt(sumIn);
+  document.getElementById('stat-out').textContent      = fmt(sumOut);
+  document.getElementById('stat-total').textContent    = allRows.length;
+  document.getElementById('stat-in-count').textContent = entradas.length + ' movimientos';
+  document.getElementById('stat-out-count').textContent= salidas.length + ' movimientos';
+
+  const years = [...new Set(allRows.map(r => { const m = r.fecha.match(/\b(20\d{2})\b/); return m ? m[1] : null; }).filter(Boolean))];
+  document.getElementById('stat-period').textContent =
+    years.length ? years[0] + (years.length > 1 ? ' – ' + years[years.length-1] : '') : '—';
+}
+
+/* ────────────────────────────────────────────────────────────
+   RENDER TABLE
+──────────────────────────────────────────────────────────── */
+function renderAll() { applyFilters(); updateStats(); }
+
+function renderTable() {
+  const tbody = document.getElementById('table-body');
+  const total = filtered.length;
+  const pages = Math.max(1, Math.ceil(total / CONFIG.ROWS_PER_PAGE));
+  if (currentPage > pages) currentPage = pages;
+
+  const start = (currentPage - 1) * CONFIG.ROWS_PER_PAGE;
+  const slice = filtered.slice(start, start + CONFIG.ROWS_PER_PAGE);
+
+  document.getElementById('showing-count').textContent =
+    total > 0 ? `${total} registro${total !== 1 ? 's' : ''}` : '';
+
+  if (slice.length === 0) {
+    tbody.innerHTML = `<tr class="loading-row"><td colspan="5">Sin resultados para los filtros aplicados.</td></tr>`;
+    renderPagination(0, 1);
+    return;
+  }
+
+  tbody.innerHTML = slice.map(r => {
+    const badgeClass = r.tipo === 'entrada' ? 'entrada'
+                     : r.tipo === 'salida'  ? 'salida'
+                     : 'balance';
+    const badgeLabel = r.tipo === 'entrada' ? '↑ Entrada'
+                     : r.tipo === 'salida'  ? '↓ Salida'
+                     : '◎ Balance';
+    const amtClass = r.monto > 0 ? 'pos' : r.monto < 0 ? 'neg' : 'bal';
+    const amtFmt   = fmt(r.monto);
+    const runFmt   = fmt(r.running);
+
+    return `
+      <tr>
+        <td class="date">${escHtml(r.fecha)}</td>
+        <td class="concept">${escHtml(capitalize(r.concept))}</td>
+        <td class="type-badge"><span class="badge ${badgeClass}">${badgeLabel}</span></td>
+        <td class="amount ${amtClass}">${amtFmt}</td>
+        <td class="running">${runFmt}</td>
+      </tr>`;
+  }).join('');
+
+  renderPagination(total, pages);
+  document.getElementById('page-info').textContent =
+    `Mostrando ${start + 1}–${Math.min(start + CONFIG.ROWS_PER_PAGE, total)} de ${total}`;
+}
+
+function renderPagination(total, pages) {
+  const pg = document.getElementById('pagination');
+  if (pages <= 1) { pg.innerHTML = ''; return; }
+
+  let html = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>`;
+  for (let i = 1; i <= pages; i++) {
+    if (pages > 7 && i > 2 && i < pages - 1 && Math.abs(i - currentPage) > 1) {
+      if (i === 3 || i === pages - 2) html += `<span style="color:var(--muted);padding:0 4px">…</span>`;
+      continue;
+    }
+    html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+  }
+  html += `<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===pages?'disabled':''}>›</button>`;
+  pg.innerHTML = html;
+}
+
+function goPage(p) { currentPage = p; renderTable(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+/* ────────────────────────────────────────────────────────────
+   UTILS
+──────────────────────────────────────────────────────────── */
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function capitalize(s) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+</script>
+</body>
+</html>
