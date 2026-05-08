@@ -945,22 +945,8 @@ function fmt(n) {
 }
 
 function updateStats() {
-  const entradas = allRows.filter(r => r.tipo === 'entrada');
-  const salidas  = allRows.filter(r => r.tipo === 'salida');
-  const balance  = allRows.length ? allRows[0].running : 0;
-  const sumIn    = entradas.reduce((s, r) => s + r.monto, 0);
-  const sumOut   = salidas.reduce((s, r) => s + r.monto, 0);
-
-  document.getElementById('stat-balance').textContent  = fmt(balance);
-  document.getElementById('stat-in').textContent       = fmt(sumIn);
-  document.getElementById('stat-out').textContent      = fmt(sumOut);
-  document.getElementById('stat-total').textContent    = allRows.length;
-  document.getElementById('stat-in-count').textContent = entradas.length + ' movimientos';
-  document.getElementById('stat-out-count').textContent= salidas.length + ' movimientos';
-
-  const years = [...new Set(allRows.map(r => { const m = r.fecha.match(/\b(20\d{2})\b/); return m ? m[1] : null; }).filter(Boolean))];
-  document.getElementById('stat-period').textContent =
-    years.length ? years[0] + (years.length > 1 ? ' – ' + years[years.length-1] : '') : '—';
+  const balance = allRows.length ? allRows[0].running : 0;
+  document.getElementById('stat-balance').textContent = fmt(balance);
 }
 
 /* ────────────────────────────────────────────────────────────
