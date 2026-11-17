@@ -438,6 +438,203 @@
       white-space: nowrap;
     }
 
+    /* ─── CORTE DE MES ───────────────────────────────────────── */
+    .btn-corte {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: 18px;
+      padding: 11px 22px;
+      min-height: 44px;
+      background: rgba(201,168,76,0.12);
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      color: var(--accent);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-corte:hover { background: rgba(201,168,76,0.22); transform: translateY(-1px); }
+    .btn-corte svg { width: 16px; height: 16px; }
+    .btn-corte.due {
+      background: linear-gradient(135deg, var(--accent) 0%, #b8922e 100%);
+      color: var(--navy);
+      animation: cortePulse 2.2s ease-in-out infinite;
+    }
+    @keyframes cortePulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.45); }
+      50%      { box-shadow: 0 0 0 9px rgba(201,168,76,0); }
+    }
+    .corte-hint {
+      margin-top: 10px;
+      font-size: 0.72rem;
+      color: var(--accent-lt);
+      letter-spacing: 0.04em;
+    }
+    .corte-hint:empty { display: none; }
+
+    .corte-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 200;
+      align-items: center; justify-content: center;
+      padding: 20px;
+      background: rgba(5,10,20,0.78);
+      backdrop-filter: blur(6px);
+      overflow-y: auto;
+    }
+    .corte-overlay.open { display: flex; animation: fadeUp 0.35s ease both; }
+    .corte-modal {
+      width: 100%; max-width: 640px;
+      margin: auto;
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 30px 32px 26px;
+      box-shadow: var(--shadow);
+    }
+    .corte-head {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+      margin-bottom: 22px;
+    }
+    .corte-kicker {
+      font-size: 0.66rem; color: var(--muted);
+      letter-spacing: 0.12em; text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .corte-head h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; color: var(--text); line-height: 1.2;
+    }
+    .corte-close {
+      flex: none;
+      width: 38px; height: 38px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      color: var(--muted);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .corte-close:hover { color: var(--accent); border-color: var(--accent); }
+    .corte-controls { margin-bottom: 18px; }
+    .corte-controls label {
+      display: block;
+      font-size: 0.68rem; color: var(--muted);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .corte-controls .filter-select { width: 100%; font-size: 0.95rem; padding: 11px 14px; }
+    .corte-notice {
+      margin-bottom: 14px;
+      padding: 10px 14px;
+      font-size: 0.78rem;
+      color: var(--accent-lt);
+      background: rgba(201,168,76,0.08);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .corte-notice:empty, .corte-warn:empty { display: none; }
+    .corte-period {
+      font-size: 0.85rem; color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .corte-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .corte-box {
+      padding: 20px 18px;
+      text-align: center;
+      background: rgba(10,22,40,0.55);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    .corte-box.final { border-color: var(--accent); background: rgba(201,168,76,0.08); }
+    .corte-label {
+      font-size: 0.68rem; color: var(--muted);
+      letter-spacing: 0.12em; text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .corte-amount {
+      font-family: 'DM Mono', monospace;
+      font-size: 1.75rem; font-weight: 500; line-height: 1.1;
+      color: var(--text);
+      word-break: break-word;
+    }
+    .corte-box.final .corte-amount { color: var(--accent-lt); }
+    .corte-sub { font-size: 0.7rem; color: var(--muted); margin-top: 8px; }
+    .corte-warn {
+      margin-top: 14px;
+      font-size: 0.74rem;
+      color: var(--red);
+    }
+    .corte-foot {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+      margin-top: 22px; padding-top: 18px;
+      border-top: 1px solid var(--border);
+    }
+    .corte-generated { font-size: 0.7rem; color: var(--muted); }
+    .btn-print {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 20px;
+      min-height: 44px;
+      background: linear-gradient(135deg, var(--accent) 0%, #b8922e 100%);
+      border: none; border-radius: 10px;
+      color: var(--navy);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem; font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-print:hover { opacity: 0.9; }
+    .btn-print svg { width: 16px; height: 16px; }
+
+    @media (max-width: 700px) {
+      .corte-overlay { padding: 12px; align-items: flex-start; }
+      .corte-modal { padding: 22px 18px 20px; border-radius: 16px; }
+      .corte-head h2 { font-size: 1.3rem; }
+      .corte-grid { grid-template-columns: 1fr; }
+      .corte-amount { font-size: 2rem; }
+      .corte-foot { flex-direction: column; align-items: stretch; text-align: center; }
+      .btn-print { justify-content: center; }
+      .btn-corte { width: 100%; }
+    }
+
+    /* Impresión / PDF: solo se imprime el corte, en blanco y negro */
+    @media print {
+      @page { margin: 18mm; }
+      body.corte-open { background: #fff !important; color: #111 !important; }
+      body.corte-open::before,
+      body.corte-open #app,
+      body.corte-open #login-screen,
+      body.corte-open .no-print { display: none !important; }
+      body.corte-open .corte-overlay {
+        position: static !important; display: block !important;
+        background: none !important; backdrop-filter: none !important;
+        padding: 0 !important; animation: none !important;
+      }
+      body.corte-open .corte-modal {
+        max-width: none; background: #fff !important; box-shadow: none !important;
+        border: 1px solid #999 !important; color: #111 !important;
+      }
+      body.corte-open .corte-head h2,
+      body.corte-open .corte-amount,
+      body.corte-open .corte-box.final .corte-amount { color: #000 !important; }
+      body.corte-open .corte-kicker,
+      body.corte-open .corte-period,
+      body.corte-open .corte-label,
+      body.corte-open .corte-sub,
+      body.corte-open .corte-generated { color: #444 !important; }
+      body.corte-open .corte-box,
+      body.corte-open .corte-box.final { background: #fff !important; border: 1px solid #999 !important; }
+      body.corte-open .corte-box.final { border: 2px solid #000 !important; }
+      body.corte-open .corte-notice { color: #333 !important; background: #f2f2f2 !important; border-color: #bbb !important; }
+      body.corte-open .corte-foot { border-top-color: #bbb !important; }
+    }
+
     /* ─── FOOTER ─────────────────────────────────────────────── */
     .table-footer {
       padding: 16px 28px;
@@ -620,6 +817,14 @@
         <div class="card-label">Saldo actual</div>
         <div class="card-amount gold" id="stat-balance">—</div>
         <div class="card-sub">Balance en caja</div>
+        <button class="btn-corte" id="btn-corte" onclick="openCorte()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <path d="M16 2v4M8 2v4M3 10h18"/>
+          </svg>
+          Corte de mes
+        </button>
+        <div class="corte-hint" id="corte-hint"></div>
       </div>
 
     </div>
@@ -677,6 +882,55 @@
       </div>
     </div>
   </main>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CORTE DE MES (ventana)
+════════════════════════════════════════════════════════════ -->
+<div class="corte-overlay" id="corte-overlay" onclick="if (event.target === this) closeCorte()">
+  <div class="corte-modal" role="dialog" aria-modal="true" aria-labelledby="corte-title">
+    <div class="corte-head">
+      <div>
+        <div class="corte-kicker">Caja de Congregación · Cuchilla de Padierna</div>
+        <h2 id="corte-title">Corte de mes</h2>
+      </div>
+      <button class="corte-close no-print" onclick="closeCorte()" aria-label="Cerrar">✕</button>
+    </div>
+
+    <div class="corte-controls no-print">
+      <label for="corte-month">Mes del corte</label>
+      <select class="filter-select" id="corte-month" onchange="renderCorte()"></select>
+    </div>
+
+    <div class="corte-notice" id="corte-notice"></div>
+    <div class="corte-period" id="corte-period"></div>
+
+    <div class="corte-grid">
+      <div class="corte-box">
+        <div class="corte-label">Saldo inicial</div>
+        <div class="corte-amount" id="corte-inicial">—</div>
+        <div class="corte-sub" id="corte-inicial-sub"></div>
+      </div>
+      <div class="corte-box final">
+        <div class="corte-label">Saldo final</div>
+        <div class="corte-amount" id="corte-final">—</div>
+        <div class="corte-sub" id="corte-final-sub"></div>
+      </div>
+    </div>
+
+    <div class="corte-warn" id="corte-warn"></div>
+
+    <div class="corte-foot">
+      <span class="corte-generated" id="corte-generated"></span>
+      <button class="btn-print no-print" onclick="window.print()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+          <rect x="6" y="14" width="12" height="8"/>
+        </svg>
+        Imprimir / Guardar PDF
+      </button>
+    </div>
+  </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════
@@ -741,6 +995,7 @@ function doLogout() {
   document.getElementById('app').classList.remove('visible');
   document.getElementById('login-screen').classList.remove('hidden');
   document.getElementById('password-input').value = '';
+  closeCorte();
 }
 
 document.getElementById('password-input').addEventListener('keydown', e => {
@@ -891,8 +1146,10 @@ function processRows(rows) {
 
     running += monto;
 
+    const pf = parseFechaES(fecha);
+    const ym = pf ? pf.y * 12 + pf.m : null;   // año*12 + mes (0-11), para ubicar el movimiento en su mes
 
-    return { id: i, fecha, concept, tipo, monto, running };
+    return { id: i, fecha, concept, tipo, monto, running, ym };
   });
 
   allRows.reverse();
@@ -948,6 +1205,7 @@ function fmt(n) {
 function updateStats() {
   const balance = allRows.length ? allRows[0].running : 0;
   document.getElementById('stat-balance').textContent = fmt(balance);
+  markCorteDue();
 }
 
 /* ────────────────────────────────────────────────────────────
@@ -1016,6 +1274,142 @@ function renderPagination(total, pages) {
 }
 
 function goPage(p) { currentPage = p; renderTable(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+/* ────────────────────────────────────────────────────────────
+   CORTE DE MES
+──────────────────────────────────────────────────────────── */
+const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+/* Lee fechas en español: "6 de jul 2024", "5 de abril 2026", "3 de Ago 2025", "27 de abril  2026", o 05/04/2026 */
+function parseFechaES(str) {
+  const s = String(str || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const y = s.match(/\b(20\d{2})\b/);
+  if (!y) return null;
+
+  const num = s.match(/\b(\d{1,2})[\/\-.](\d{1,2})[\/\-.](20\d{2})\b/);
+  if (num) {
+    const m = parseInt(num[2], 10) - 1;
+    return (m >= 0 && m <= 11) ? { y: parseInt(num[3], 10), m } : null;
+  }
+
+  const keys = MESES.map(n => n.slice(0, 3));
+  const afterDe = s.match(/\bde\s+([a-z]{3,})/);                 // palabra después de "de"
+  const words   = afterDe ? [afterDe[1]] : (s.match(/[a-z]{3,}/g) || []);
+  for (const w of words) {
+    const m = keys.indexOf(w.slice(0, 3));
+    if (m >= 0) return { y: parseInt(y[1], 10), m };
+  }
+  return null;
+}
+
+function round2(n) { return Math.round(n * 100) / 100; }
+
+function ymLabel(ym) {
+  const m = ((ym % 12) + 12) % 12, y = Math.floor(ym / 12);
+  return MESES[m].charAt(0).toUpperCase() + MESES[m].slice(1) + ' ' + y;
+}
+
+function todayInfo() {
+  const now = new Date();
+  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  return {
+    now,
+    ym: now.getFullYear() * 12 + now.getMonth(),
+    isLastDay: tomorrow.getMonth() !== now.getMonth(),
+    lastDay: new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
+  };
+}
+
+/* Resalta el botón el último día del mes */
+function markCorteDue() {
+  const btn = document.getElementById('btn-corte');
+  const hint = document.getElementById('corte-hint');
+  if (!btn || !hint) return;
+  const due = todayInfo().isLastDay;
+  btn.classList.toggle('due', due);
+  hint.textContent = due ? 'Hoy es el último día del mes: toca hacer el corte' : '';
+}
+
+function openCorte() {
+  const t = todayInfo();
+  const yms = allRows.map(r => r.ym).filter(v => v !== null);
+  const minYm = yms.length ? Math.min(...yms) : t.ym;
+  const maxYm = Math.max(t.ym, yms.length ? Math.max(...yms) : t.ym);
+
+  // Meses disponibles: del más reciente al más antiguo
+  const sel = document.getElementById('corte-month');
+  sel.innerHTML = '';
+  for (let ym = maxYm; ym >= minYm; ym--) {
+    const o = document.createElement('option');
+    o.value = String(ym);
+    o.textContent = ymLabel(ym) + (ym === t.ym ? ' (mes en curso)' : '');
+    sel.appendChild(o);
+  }
+
+  // Por defecto: el mes en curso si hoy es su último día; si no, el último mes cerrado
+  let def = t.isLastDay ? t.ym : t.ym - 1;
+  if (def < minYm) def = minYm;
+  sel.value = String(def);
+
+  document.getElementById('corte-overlay').classList.add('open');
+  document.body.classList.add('corte-open');
+  document.body.style.overflow = 'hidden';
+  renderCorte();
+}
+
+function closeCorte() {
+  const ov = document.getElementById('corte-overlay');
+  if (ov) ov.classList.remove('open');
+  document.body.classList.remove('corte-open');
+  document.body.style.overflow = '';
+}
+
+function renderCorte() {
+  const ym = parseInt(document.getElementById('corte-month').value, 10);
+  const y = Math.floor(ym / 12), m = ((ym % 12) + 12) % 12;
+  const t = todayInfo();
+
+  let inicial = 0, delMes = 0, sinFecha = 0, movsMes = 0;
+  allRows.forEach(r => {
+    if (r.ym === null) { sinFecha++; return; }
+    if (r.ym < ym) inicial += r.monto;
+    else if (r.ym === ym) { delMes += r.monto; movsMes++; }
+  });
+  inicial = round2(inicial);
+  const final = round2(inicial + delMes);
+
+  const lastDay = new Date(y, m + 1, 0).getDate();
+  document.getElementById('corte-title').textContent = 'Corte de ' + MESES[m] + ' ' + y;
+  document.getElementById('corte-period').textContent = `Periodo: del 1 al ${lastDay} de ${MESES[m]} de ${y}`;
+  document.getElementById('corte-inicial').textContent = fmt(inicial);
+  document.getElementById('corte-final').textContent = fmt(final);
+  document.getElementById('corte-inicial-sub').textContent = `Al abrir el 1 de ${MESES[m]}`;
+  document.getElementById('corte-final-sub').textContent = `Al cierre del ${lastDay} de ${MESES[m]}`;
+
+  // Avisos
+  let notice = '';
+  if (!allRows.length) {
+    notice = 'Aún no hay datos cargados. Presiona "Actualizar" y vuelve a abrir el corte.';
+  } else if (ym === t.ym && t.isLastDay) {
+    notice = 'Hoy es el último día del mes: este es el corte de cierre.';
+  } else if (ym === t.ym) {
+    notice = `Mes en curso: el corte es parcial. El cierre es el ${t.lastDay} de ${MESES[m]}.`;
+  } else if (ym > t.ym) {
+    notice = 'Este mes aún no ocurre.';
+  } else if (movsMes === 0) {
+    notice = 'No hay movimientos registrados en este mes; el saldo no cambió.';
+  }
+  document.getElementById('corte-notice').textContent = notice;
+
+  document.getElementById('corte-warn').textContent = sinFecha
+    ? `⚠ ${sinFecha} movimiento${sinFecha !== 1 ? 's' : ''} con fecha no reconocida no se incluyó en este corte. Revisa el formato de la fecha en la hoja.`
+    : '';
+
+  document.getElementById('corte-generated').textContent =
+    'Generado el ' + t.now.toLocaleString('es-MX', { dateStyle: 'long', timeStyle: 'short' });
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCorte(); });
 
 /* ────────────────────────────────────────────────────────────
    UTILS
