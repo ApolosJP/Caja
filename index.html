@@ -540,18 +540,22 @@
       font-size: 0.85rem; color: var(--muted);
       margin-bottom: 16px;
     }
+
+    /* Cuatro cifras: saldo inicial (ancho completo), entradas | salidas, saldo final (ancho completo) */
     .corte-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 14px;
     }
     .corte-box {
-      padding: 20px 18px;
+      padding: 18px 16px;
       text-align: center;
       background: rgba(10,22,40,0.55);
       border: 1px solid var(--border);
       border-radius: var(--radius);
+      min-width: 0;
     }
+    .corte-box.wide { grid-column: 1 / -1; padding: 20px 18px; }
     .corte-box.final { border-color: var(--accent); background: rgba(201,168,76,0.08); }
     .corte-label {
       font-size: 0.68rem; color: var(--muted);
@@ -560,11 +564,15 @@
     }
     .corte-amount {
       font-family: 'DM Mono', monospace;
-      font-size: 1.75rem; font-weight: 500; line-height: 1.1;
+      font-weight: 500; line-height: 1.1;
       color: var(--text);
-      word-break: break-word;
+      overflow-wrap: anywhere;
     }
+    .corte-box.wide .corte-amount  { font-size: 1.75rem; }
+    .corte-box.small .corte-amount { font-size: 1.35rem; }
     .corte-box.final .corte-amount { color: var(--accent-lt); }
+    .corte-box.in  .corte-amount   { color: var(--green); }
+    .corte-box.out .corte-amount   { color: var(--red); }
     .corte-sub { font-size: 0.7rem; color: var(--muted); margin-top: 8px; }
     .corte-warn {
       margin-top: 14px;
@@ -596,8 +604,12 @@
       .corte-overlay { padding: 12px; align-items: flex-start; }
       .corte-modal { padding: 22px 18px 20px; border-radius: 16px; }
       .corte-head h2 { font-size: 1.3rem; }
-      .corte-grid { grid-template-columns: 1fr; }
-      .corte-amount { font-size: 2rem; }
+      .corte-grid { gap: 10px; }
+      .corte-box { padding: 16px 10px; }
+      .corte-box.wide { padding: 18px 14px; }
+      .corte-box.wide .corte-amount  { font-size: 2rem; }
+      .corte-box.small .corte-amount { font-size: clamp(0.95rem, 4.6vw, 1.35rem); }
+      .corte-label { letter-spacing: 0.08em; }
       .corte-foot { flex-direction: column; align-items: stretch; text-align: center; }
       .btn-print { justify-content: center; }
       .btn-corte { width: 100%; }
@@ -622,14 +634,16 @@
       }
       body.corte-open .corte-head h2,
       body.corte-open .corte-amount,
-      body.corte-open .corte-box.final .corte-amount { color: #000 !important; }
+      body.corte-open .corte-box.final .corte-amount,
+      body.corte-open .corte-box.in .corte-amount,
+      body.corte-open .corte-box.out .corte-amount { color: #000 !important; }
       body.corte-open .corte-kicker,
       body.corte-open .corte-period,
       body.corte-open .corte-label,
       body.corte-open .corte-sub,
       body.corte-open .corte-generated { color: #444 !important; }
       body.corte-open .corte-box,
-      body.corte-open .corte-box.final { background: #fff !important; border: 1px solid #999 !important; }
+      body.corte-open .corte-box.final { background: #fff !important; border: 1px solid #999 !important; break-inside: avoid; }
       body.corte-open .corte-box.final { border: 2px solid #000 !important; }
       body.corte-open .corte-notice { color: #333 !important; background: #f2f2f2 !important; border-color: #bbb !important; }
       body.corte-open .corte-foot { border-top-color: #bbb !important; }
@@ -906,12 +920,22 @@
     <div class="corte-period" id="corte-period"></div>
 
     <div class="corte-grid">
-      <div class="corte-box">
+      <div class="corte-box wide">
         <div class="corte-label">Saldo inicial</div>
         <div class="corte-amount" id="corte-inicial">—</div>
         <div class="corte-sub" id="corte-inicial-sub"></div>
       </div>
-      <div class="corte-box final">
+      <div class="corte-box small in">
+        <div class="corte-label">↑ Entradas del mes</div>
+        <div class="corte-amount" id="corte-entradas">—</div>
+        <div class="corte-sub" id="corte-entradas-sub"></div>
+      </div>
+      <div class="corte-box small out">
+        <div class="corte-label">↓ Salidas del mes</div>
+        <div class="corte-amount" id="corte-salidas">—</div>
+        <div class="corte-sub" id="corte-salidas-sub"></div>
+      </div>
+      <div class="corte-box wide final">
         <div class="corte-label">Saldo final</div>
         <div class="corte-amount" id="corte-final">—</div>
         <div class="corte-sub" id="corte-final-sub"></div>
@@ -1147,7 +1171,7 @@ function processRows(rows) {
     running += monto;
 
     const pf = parseFechaES(fecha);
-    const ym = pf ? pf.y * 12 + pf.m : null;   // año*12 + mes (0-11), para ubicar el movimiento en su mes
+    const ym = pf ? pf.y * 12 + pf.m : null;   // año*12 + mes (0-11): ubica el movimiento en su mes
 
     return { id: i, fecha, concept, tipo, monto, running, ym };
   });
@@ -1369,37 +1393,50 @@ function renderCorte() {
   const y = Math.floor(ym / 12), m = ((ym % 12) + 12) % 12;
   const t = todayInfo();
 
-  let inicial = 0, delMes = 0, sinFecha = 0, movsMes = 0;
+  // Saldo inicial = todo lo anterior al mes. Dentro del mes: "salida" suma a salidas;
+  // "entrada" (y el traspaso inicial "balance") suman a entradas.
+  let inicial = 0, entradas = 0, salidas = 0, nEnt = 0, nSal = 0, nBal = 0, sinFecha = 0;
   allRows.forEach(r => {
     if (r.ym === null) { sinFecha++; return; }
-    if (r.ym < ym) inicial += r.monto;
-    else if (r.ym === ym) { delMes += r.monto; movsMes++; }
+    if (r.ym < ym) { inicial += r.monto; return; }
+    if (r.ym > ym) return;
+    if (r.tipo === 'salida') { salidas += r.monto; nSal++; }
+    else { entradas += r.monto; nEnt++; if (r.tipo === 'balance') nBal++; }
   });
-  inicial = round2(inicial);
-  const final = round2(inicial + delMes);
+  inicial  = round2(inicial);
+  entradas = round2(entradas);
+  salidas  = round2(salidas);
+  const final = round2(inicial + entradas + salidas);
+  const nMov = nEnt + nSal;
 
   const lastDay = new Date(y, m + 1, 0).getDate();
+  const plural = n => `${n} movimiento${n !== 1 ? 's' : ''}`;
   document.getElementById('corte-title').textContent = 'Corte de ' + MESES[m] + ' ' + y;
   document.getElementById('corte-period').textContent = `Periodo: del 1 al ${lastDay} de ${MESES[m]} de ${y}`;
-  document.getElementById('corte-inicial').textContent = fmt(inicial);
-  document.getElementById('corte-final').textContent = fmt(final);
-  document.getElementById('corte-inicial-sub').textContent = `Al abrir el 1 de ${MESES[m]}`;
-  document.getElementById('corte-final-sub').textContent = `Al cierre del ${lastDay} de ${MESES[m]}`;
+  document.getElementById('corte-inicial').textContent  = fmt(inicial);
+  document.getElementById('corte-entradas').textContent = fmt(entradas);
+  document.getElementById('corte-salidas').textContent  = fmt(salidas);
+  document.getElementById('corte-final').textContent    = fmt(final);
+  document.getElementById('corte-inicial-sub').textContent  = `Al abrir el 1 de ${MESES[m]}`;
+  document.getElementById('corte-entradas-sub').textContent = plural(nEnt);
+  document.getElementById('corte-salidas-sub').textContent  = plural(nSal);
+  document.getElementById('corte-final-sub').textContent    = `Al cierre del ${lastDay} de ${MESES[m]}`;
 
   // Avisos
-  let notice = '';
+  const notes = [];
   if (!allRows.length) {
-    notice = 'Aún no hay datos cargados. Presiona "Actualizar" y vuelve a abrir el corte.';
+    notes.push('Aún no hay datos cargados. Presiona "Actualizar" y vuelve a abrir el corte.');
   } else if (ym === t.ym && t.isLastDay) {
-    notice = 'Hoy es el último día del mes: este es el corte de cierre.';
+    notes.push('Hoy es el último día del mes: este es el corte de cierre.');
   } else if (ym === t.ym) {
-    notice = `Mes en curso: el corte es parcial. El cierre es el ${t.lastDay} de ${MESES[m]}.`;
+    notes.push(`Mes en curso: el corte es parcial. El cierre es el ${t.lastDay} de ${MESES[m]}.`);
   } else if (ym > t.ym) {
-    notice = 'Este mes aún no ocurre.';
-  } else if (movsMes === 0) {
-    notice = 'No hay movimientos registrados en este mes; el saldo no cambió.';
+    notes.push('Este mes aún no ocurre.');
+  } else if (nMov === 0) {
+    notes.push('No hay movimientos registrados en este mes; el saldo no cambió.');
   }
-  document.getElementById('corte-notice').textContent = notice;
+  if (nBal) notes.push('Las entradas incluyen el traspaso de fondos inicial de la caja.');
+  document.getElementById('corte-notice').textContent = notes.join(' ');
 
   document.getElementById('corte-warn').textContent = sinFecha
     ? `⚠ ${sinFecha} movimiento${sinFecha !== 1 ? 's' : ''} con fecha no reconocida no se incluyó en este corte. Revisa el formato de la fecha en la hoja.`
