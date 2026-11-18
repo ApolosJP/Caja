@@ -600,6 +600,66 @@
     .btn-print:hover { opacity: 0.9; }
     .btn-print svg { width: 16px; height: 16px; }
 
+    /* Cajas de entradas/salidas: botones que despliegan su lista */
+    button.corte-box.small {
+      appearance: none; -webkit-appearance: none;
+      font: inherit; color: inherit;
+      width: 100%;
+      display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s;
+    }
+    button.corte-box.small:hover { transform: translateY(-1px); }
+    button.corte-box.in:hover,  button.corte-box.in.open  { border-color: var(--green); background: rgba(45,206,137,0.07); }
+    button.corte-box.out:hover, button.corte-box.out.open { border-color: var(--red);   background: rgba(245,54,92,0.07); }
+    button.corte-box.small:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .corte-box.small > span { display: block; }
+    .corte-more {
+      margin-top: 10px;
+      font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--accent-lt);
+    }
+    .corte-more::after { content: '▾'; display: inline-block; margin-left: 6px; transition: transform 0.2s; }
+    button.corte-box.open .corte-more::after { transform: rotate(180deg); }
+
+    .corte-detail {
+      display: none;
+      grid-column: 1 / -1;
+      padding: 16px 18px 6px;
+      background: rgba(10,22,40,0.55);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    .corte-detail.open { display: block; animation: fadeUp 0.3s ease both; }
+    .corte-detail.in  { border-color: rgba(45,206,137,0.35); }
+    .corte-detail.out { border-color: rgba(245,54,92,0.35); }
+    .corte-detail-title {
+      font-size: 0.68rem; color: var(--muted);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding-bottom: 10px;
+    }
+    .corte-detail-list { max-height: 320px; overflow-y: auto; }
+    .corte-item {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
+      padding: 11px 0;
+      border-top: 1px solid rgba(201,168,76,0.12);
+    }
+    .corte-item-main { min-width: 0; }
+    .corte-item-date {
+      display: block;
+      font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--muted);
+      margin-bottom: 3px;
+    }
+    .corte-item-concept { display: block; font-size: 0.9rem; color: var(--text); line-height: 1.3; }
+    .corte-item-amount {
+      flex: none;
+      font-family: 'DM Mono', monospace; font-size: 0.92rem; font-weight: 500;
+      white-space: nowrap;
+    }
+    .corte-item-amount.entrada { color: var(--green); }
+    .corte-item-amount.salida  { color: var(--red); }
+    .corte-detail-empty { padding: 6px 0 14px; font-size: 0.85rem; color: var(--muted); }
+
     @media (max-width: 700px) {
       .corte-overlay { padding: 12px; align-items: flex-start; }
       .corte-modal { padding: 22px 18px 20px; border-radius: 16px; }
@@ -613,6 +673,9 @@
       .corte-foot { flex-direction: column; align-items: stretch; text-align: center; }
       .btn-print { justify-content: center; }
       .btn-corte { width: 100%; }
+      .corte-detail { padding: 14px 14px 4px; }
+      .corte-item { gap: 10px; }
+      .corte-item-amount { font-size: 0.85rem; }
     }
 
     /* Impresión / PDF: solo se imprime el corte, en blanco y negro */
@@ -647,6 +710,18 @@
       body.corte-open .corte-box.final { border: 2px solid #000 !important; }
       body.corte-open .corte-notice { color: #333 !important; background: #f2f2f2 !important; border-color: #bbb !important; }
       body.corte-open .corte-foot { border-top-color: #bbb !important; }
+      body.corte-open .corte-box, body.corte-open .corte-more::after { transition: none !important; transform: none !important; }
+      body.corte-open .corte-more { display: none !important; }
+      body.corte-open .corte-detail,
+      body.corte-open .corte-detail.in,
+      body.corte-open .corte-detail.out { background: #fff !important; border: 1px solid #999 !important; animation: none !important; }
+      body.corte-open .corte-detail-list { max-height: none !important; overflow: visible !important; }
+      body.corte-open .corte-detail-title,
+      body.corte-open .corte-item-date { color: #444 !important; }
+      body.corte-open .corte-item { border-top-color: #bbb !important; break-inside: avoid; }
+      body.corte-open .corte-item-concept,
+      body.corte-open .corte-item-amount.entrada,
+      body.corte-open .corte-item-amount.salida { color: #000 !important; }
     }
 
     /* ─── FOOTER ─────────────────────────────────────────────── */
@@ -925,16 +1000,19 @@
         <div class="corte-amount" id="corte-inicial">—</div>
         <div class="corte-sub" id="corte-inicial-sub"></div>
       </div>
-      <div class="corte-box small in">
-        <div class="corte-label">↑ Entradas del mes</div>
-        <div class="corte-amount" id="corte-entradas">—</div>
-        <div class="corte-sub" id="corte-entradas-sub"></div>
-      </div>
-      <div class="corte-box small out">
-        <div class="corte-label">↓ Salidas del mes</div>
-        <div class="corte-amount" id="corte-salidas">—</div>
-        <div class="corte-sub" id="corte-salidas-sub"></div>
-      </div>
+      <button type="button" class="corte-box small in" id="corte-btn-entrada" onclick="toggleCorteList('entrada')" aria-expanded="false" aria-controls="corte-detail">
+        <span class="corte-label">↑ Entradas del mes</span>
+        <span class="corte-amount" id="corte-entradas">—</span>
+        <span class="corte-sub" id="corte-entradas-sub"></span>
+        <span class="corte-more no-print">Ver lista</span>
+      </button>
+      <button type="button" class="corte-box small out" id="corte-btn-salida" onclick="toggleCorteList('salida')" aria-expanded="false" aria-controls="corte-detail">
+        <span class="corte-label">↓ Salidas del mes</span>
+        <span class="corte-amount" id="corte-salidas">—</span>
+        <span class="corte-sub" id="corte-salidas-sub"></span>
+        <span class="corte-more no-print">Ver lista</span>
+      </button>
+      <div class="corte-detail" id="corte-detail" aria-live="polite"></div>
       <div class="corte-box wide final">
         <div class="corte-label">Saldo final</div>
         <div class="corte-amount" id="corte-final">—</div>
@@ -1326,6 +1404,8 @@ function parseFechaES(str) {
   return null;
 }
 
+let corteList = null;   // null | 'entrada' | 'salida': lista desplegada en la ventana del corte
+
 function round2(n) { return Math.round(n * 100) / 100; }
 
 function ymLabel(ym) {
@@ -1374,6 +1454,7 @@ function openCorte() {
   let def = t.isLastDay ? t.ym : t.ym - 1;
   if (def < minYm) def = minYm;
   sel.value = String(def);
+  corteList = null;
 
   document.getElementById('corte-overlay').classList.add('open');
   document.body.classList.add('corte-open');
@@ -1444,6 +1525,50 @@ function renderCorte() {
 
   document.getElementById('corte-generated').textContent =
     'Generado el ' + t.now.toLocaleString('es-MX', { dateStyle: 'long', timeStyle: 'short' });
+
+  renderCorteList();
+}
+
+/* Despliega / oculta la lista de entradas o salidas del mes elegido */
+function toggleCorteList(kind) {
+  corteList = (corteList === kind) ? null : kind;
+  renderCorteList();
+}
+
+function renderCorteList() {
+  const box = document.getElementById('corte-detail');
+  ['entrada', 'salida'].forEach(k => {
+    const b = document.getElementById('corte-btn-' + k);
+    const on = corteList === k;
+    b.classList.toggle('open', on);
+    b.setAttribute('aria-expanded', on ? 'true' : 'false');
+    b.querySelector('.corte-more').textContent = on ? 'Ocultar lista' : 'Ver lista';
+  });
+
+  if (!corteList) { box.className = 'corte-detail'; box.innerHTML = ''; return; }
+
+  const ym = parseInt(document.getElementById('corte-month').value, 10);
+  const m = ((ym % 12) + 12) % 12, y = Math.floor(ym / 12);
+  const esSalida = corteList === 'salida';
+  const items = allRows.filter(r => r.ym === ym && ((r.tipo === 'salida') === esSalida));   // del más reciente al más antiguo
+  const nombre = esSalida ? 'Salidas' : 'Entradas';
+  const titulo = `${nombre} de ${MESES[m]} ${y} · ${items.length} movimiento${items.length !== 1 ? 's' : ''}`;
+
+  let html = `<div class="corte-detail-title">${escHtml(titulo)}</div>`;
+  if (!items.length) {
+    html += `<div class="corte-detail-empty">No hay ${esSalida ? 'salidas' : 'entradas'} registradas en este mes.</div>`;
+  } else {
+    html += '<div class="corte-detail-list">' + items.map(r => `
+      <div class="corte-item">
+        <div class="corte-item-main">
+          <span class="corte-item-date">${escHtml(r.fecha.replace(/\s+/g, ' '))}</span>
+          <span class="corte-item-concept">${escHtml(capitalize(r.concept))}</span>
+        </div>
+        <span class="corte-item-amount ${esSalida ? 'salida' : 'entrada'}">${fmt(r.monto)}</span>
+      </div>`).join('') + '</div>';
+  }
+  box.className = 'corte-detail open ' + (esSalida ? 'out' : 'in');
+  box.innerHTML = html;
 }
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCorte(); });
